@@ -1,0 +1,1 @@
+mysql -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < /etc/mysql/volume/dump.sql

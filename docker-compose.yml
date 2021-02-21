@@ -1,0 +1,35 @@
+version: '3.1'
+
+services:
+  php:
+    container_name: nethernite_php
+    build:
+      context: ./php/
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/example
+      - ./php/php.ini:/usr/local/etc/php/conf.d/40-custom.ini:ro
+  nginx:
+    container_name: nethernite_nginx
+    image: nginx:1.19
+    links:
+      - php
+    ports:
+      - 8000:80
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - .:/var/www/example
+  mysql:
+    container_name: nethernite_mysql
+    build:
+      context: ./mysql/
+      dockerfile: Dockerfile
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=test_task
+    volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      - ./mysql/config:/etc/mysql/conf.d
+      - ./mysql:/etc/mysql/volume:ro
