@@ -1,6 +1,7 @@
 <?php
 
 namespace Model;
+
 use App;
 use CI_Emerald_Model;
 
@@ -10,7 +11,8 @@ use CI_Emerald_Model;
  * Date: 27.01.2020
  * Time: 10:10
  */
-class Boosterpack_model extends CI_Emerald_Model {
+class Boosterpack_model extends CI_Emerald_Model
+{
     const CLASS_TABLE = 'boosterpack';
 
 

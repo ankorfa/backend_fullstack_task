@@ -147,14 +147,12 @@ class Comment_model extends CI_Emerald_Model
     /**
      * @return User_model
      */
-    public function get_user():User_model
+    public function get_user(): User_model
     {
-        if (empty($this->user))
-        {
+        if (empty($this->user)) {
             try {
                 $this->user = new User_model($this->get_user_id());
-            } catch (Exception $exception)
-            {
+            } catch (Exception $exception) {
                 $this->user = new User_model();
             }
         }
@@ -195,10 +193,9 @@ class Comment_model extends CI_Emerald_Model
     public static function get_all_by_assign_id(int $assting_id)
     {
 
-        $data = App::get_ci()->s->from(self::CLASS_TABLE)->where(['assign_id' => $assting_id])->orderBy('time_created','ASC')->many();
+        $data = App::get_ci()->s->from(self::CLASS_TABLE)->where(['assign_id' => $assting_id])->orderBy('time_created', 'ASC')->many();
         $ret = [];
-        foreach ($data as $i)
-        {
+        foreach ($data as $i) {
             $ret[] = (new self())->set($i);
         }
         return $ret;
@@ -212,8 +209,7 @@ class Comment_model extends CI_Emerald_Model
      */
     public static function preparation($data, $preparation = 'default')
     {
-        switch ($preparation)
-        {
+        switch ($preparation) {
             case 'full_info':
                 return self::_preparation_full_info($data);
             default:
@@ -230,13 +226,13 @@ class Comment_model extends CI_Emerald_Model
     {
         $ret = [];
 
-        foreach ($data as $d){
+        foreach ($data as $d) {
             $o = new stdClass();
 
             $o->id = $d->get_id();
             $o->text = $d->get_text();
 
-            $o->user = User_model::preparation($d->get_user(),'main_page');
+            $o->user = User_model::preparation($d->get_user(), 'main_page');
 
             $o->likes = rand(0, 25);
 

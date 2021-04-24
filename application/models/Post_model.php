@@ -1,6 +1,7 @@
 <?php
 
 namespace Model;
+
 use App;
 use CI_Emerald_Model;
 use Comment_model;
@@ -13,7 +14,8 @@ use stdClass;
  * Date: 27.01.2020
  * Time: 10:10
  */
-class Post_model extends CI_Emerald_Model {
+class Post_model extends CI_Emerald_Model
+{
     const CLASS_TABLE = 'post';
 
 
@@ -148,8 +150,7 @@ class Post_model extends CI_Emerald_Model {
     {
         $this->is_loaded(TRUE);
 
-        if (empty($this->comments))
-        {
+        if (empty($this->comments)) {
             $this->comments = Comment_model::get_all_by_assign_id($this->get_id());
         }
         return $this->comments;
@@ -163,13 +164,10 @@ class Post_model extends CI_Emerald_Model {
     {
         $this->is_loaded(TRUE);
 
-        if (empty($this->user))
-        {
-            try
-            {
+        if (empty($this->user)) {
+            try {
                 $this->user = new User_model($this->get_user_id());
-            } catch (Exception $exception)
-            {
+            } catch (Exception $exception) {
                 $this->user = new User_model();
             }
         }
@@ -202,7 +200,8 @@ class Post_model extends CI_Emerald_Model {
         return (App::get_ci()->s->get_affected_rows() > 0);
     }
 
-    public function comment(){
+    public function comment()
+    {
 
     }
 
@@ -215,8 +214,7 @@ class Post_model extends CI_Emerald_Model {
 
         $data = App::get_ci()->s->from(self::CLASS_TABLE)->many();
         $ret = [];
-        foreach ($data as $i)
-        {
+        foreach ($data as $i) {
             $ret[] = (new self())->set($i);
         }
         return $ret;
@@ -230,8 +228,7 @@ class Post_model extends CI_Emerald_Model {
      */
     public static function preparation($data, $preparation = 'default')
     {
-        switch ($preparation)
-        {
+        switch ($preparation) {
             case 'main_page':
                 return self::_preparation_main_page($data);
             case 'full_info':
@@ -249,8 +246,7 @@ class Post_model extends CI_Emerald_Model {
     {
         $ret = [];
 
-        foreach ($data as $d)
-        {
+        foreach ($data as $d) {
             $o = new stdClass();
 
             $o->id = $d->get_id();

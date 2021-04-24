@@ -17,8 +17,7 @@ class Main_page extends MY_Controller
     {
         parent::__construct();
 
-        if (is_prod())
-        {
+        if (is_prod()) {
             die('In production it will be hard to debug! Run as development environment!');
         }
     }
@@ -32,54 +31,54 @@ class Main_page extends MY_Controller
 
     public function get_all_posts()
     {
-        $posts =  Post_model::preparation(Post_model::get_all(), 'main_page');
+        $posts = Post_model::preparation(Post_model::get_all(), 'main_page');
         return $this->response_success(['posts' => $posts]);
     }
 
-    public function get_post($post_id){ // or can be $this->input->post('news_id') , but better for GET REQUEST USE THIS
+    public function get_post($post_id)
+    { // or can be $this->input->post('news_id') , but better for GET REQUEST USE THIS
 
         $post_id = intval($post_id);
 
-        if (empty($post_id)){
+        if (empty($post_id)) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
         }
 
-        try
-        {
+        try {
             $post = new Post_model($post_id);
-        } catch (EmeraldModelNoDataException $ex){
+        } catch (EmeraldModelNoDataException $ex) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NO_DATA);
         }
 
 
-        $posts =  Post_model::preparation($post, 'full_info');
+        $posts = Post_model::preparation($post, 'full_info');
         return $this->response_success(['post' => $posts]);
     }
 
 
-    public function comment($post_id,$message){ // or can be App::get_ci()->input->post('news_id') , but better for GET REQUEST USE THIS ( tests )
+    public function comment($post_id, $message)
+    { // or can be App::get_ci()->input->post('news_id') , but better for GET REQUEST USE THIS ( tests )
 
-        if (!User_model::is_logged()){
+        if (!User_model::is_logged()) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NEED_AUTH);
         }
 
         $post_id = intval($post_id);
 
-        if (empty($post_id) || empty($message)){
+        if (empty($post_id) || empty($message)) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
         }
 
-        try
-        {
+        try {
             $post = new Post_model($post_id);
-        } catch (EmeraldModelNoDataException $ex){
+        } catch (EmeraldModelNoDataException $ex) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NO_DATA);
         }
 
         // Todo: 2 nd task Comment
         $post->comment();
 
-        $posts =  Post_model::preparation($post, 'full_info');
+        $posts = Post_model::preparation($post, 'full_info');
         return $this->response_success(['post' => $posts]);
     }
 
@@ -90,7 +89,7 @@ class Main_page extends MY_Controller
         $login = App::get_ci()->input->post('login');
         $password = App::get_ci()->input->post('password');
 
-        if (empty($login) || empty($password)){
+        if (empty($login) || empty($password)) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
         }
 
@@ -111,20 +110,23 @@ class Main_page extends MY_Controller
         redirect(site_url('/'));
     }
 
-    public function add_money(){
+    public function add_money()
+    {
         // todo: 4th task  add money to user logic
-        return $this->response_success(['amount' => rand(1,55)]); // Колво лайков под постом \ комментарием чтобы обновить . Сейчас рандомная заглушка
+        return $this->response_success(['amount' => rand(1, 55)]); // Колво лайков под постом \ комментарием чтобы обновить . Сейчас рандомная заглушка
     }
 
-    public function buy_boosterpack(){
+    public function buy_boosterpack()
+    {
         // todo: 5th task add money to user logic
-        return $this->response_success(['amount' => rand(1,55)]); // Колво лайков под постом \ комментарием чтобы обновить . Сейчас рандомная заглушка
+        return $this->response_success(['amount' => rand(1, 55)]); // Колво лайков под постом \ комментарием чтобы обновить . Сейчас рандомная заглушка
     }
 
 
-    public function like(){
+    public function like()
+    {
         // todo: 3rd task add like post\comment logic
-        return $this->response_success(['likes' => rand(1,55)]); // Колво лайков под постом \ комментарием чтобы обновить . Сейчас рандомная заглушка
+        return $this->response_success(['likes' => rand(1, 55)]); // Колво лайков под постом \ комментарием чтобы обновить . Сейчас рандомная заглушка
     }
 
 }
