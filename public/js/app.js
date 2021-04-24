@@ -64,6 +64,9 @@ var app = new Vue({
 					.then(function (response) {
 						setTimeout(function () {
 							$('#loginModal').modal('hide');
+							if (response.data.status === 'success') {
+								window.location.reload();
+							}
 						}, 500);
 					})
 			}
