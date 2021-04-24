@@ -1,5 +1,12 @@
 <?php
 
+namespace Model;
+
+use CI_Emerald_Model;
+use App;
+use Exception;
+use stdClass;
+
 /**
  * Created by PhpStorm.
  * User: mr.incognito

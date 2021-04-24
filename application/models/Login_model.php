@@ -12,7 +12,6 @@ class Login_model extends CI_Emerald_Model
     public function __construct()
     {
         parent::__construct();
-
     }
 
     public static function logout()
