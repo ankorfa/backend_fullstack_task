@@ -33,3 +33,4 @@ services:
       - ./mysql/init:/docker-entrypoint-initdb.d
       - ./mysql/config:/etc/mysql/conf.d
       - ./mysql:/etc/mysql/volume:ro
+      - ./mysqldata:/var/lib/mysql

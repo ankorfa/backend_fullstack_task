@@ -262,6 +262,17 @@ class User_model extends CI_Emerald_Model
     }
 
     /**
+     * @param string $login
+     * @param string $pasword
+     * @return User_model|null
+     */
+    public static function get_one(string $login,string $pasword): ?User_model
+    {
+        $data = App::get_ci()->s->from(self::CLASS_TABLE)->where(['email' => $login, 'password' => $pasword])->one();
+        return $data ? (new self())->set($data) : null;
+    }
+
+    /**
      * @return self[]
      * @throws Exception
      */

@@ -83,24 +83,31 @@ class Main_page extends MY_Controller
     }
 
 
-    public function login($user_id)
+    /**
+     * @throws Exception
+     */
+    public function login($user_id = null)
     {
-        // Right now for tests we use from contriller
-        $login = App::get_ci()->input->post('login');
-        $password = App::get_ci()->input->post('password');
+        $post = json_decode($this->security->xss_clean($this->input->raw_input_stream));
+
+        // Right now for tests we use from controller
+        $login = $post->login ?? null;
+        $password = $post->password ?? null;
 
         if (empty($login) || empty($password)) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
         }
 
-        // But data from modal window sent by POST request.  App::get_ci()->input...  to get it.
+        $user = User_model::get_one($login, $password);
 
+        if ($user) {
+            $userModel = User_model::preparation($user, 'main_page');
+            Login_model::start_session($user);
 
-        //Todo: 1 st task - Authorisation.
-
-        Login_model::start_session($user_id);
-
-        return $this->response_success(['user' => $user_id]);
+            return $this->response_success(['user' => $user->get_id()]);
+        } else {
+            return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
+        }
     }
 
 
