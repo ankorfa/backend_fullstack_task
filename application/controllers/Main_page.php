@@ -38,7 +38,7 @@ class Main_page extends MY_Controller
     public function get_post($post_id)
     { // or can be $this->input->post('news_id') , but better for GET REQUEST USE THIS
 
-        $post_id = intval($post_id);
+        $post_id = (int)$post_id;
 
         if (empty($post_id)) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
@@ -56,29 +56,35 @@ class Main_page extends MY_Controller
     }
 
 
-    public function comment($post_id, $message)
-    { // or can be App::get_ci()->input->post('news_id') , but better for GET REQUEST USE THIS ( tests )
-
+    /**
+     * @throws Exception
+     */
+    public function comment()
+    {
         if (!User_model::is_logged()) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NEED_AUTH);
         }
 
-        $post_id = intval($post_id);
+        $post = json_decode($this->security->xss_clean($this->input->raw_input_stream));
 
-        if (empty($post_id) || empty($message)) {
+        $postId = (int)$post->post_id ?? null;
+        $parentCommentId = (int)$post->parent_comment_id ?? null;
+        $text = (string)$post->text ?? null;
+
+        if (!$postId || !$text) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_WRONG_PARAMS);
         }
 
         try {
-            $post = new Post_model($post_id);
+            $post = new Post_model($postId);
         } catch (EmeraldModelNoDataException $ex) {
             return $this->response_error(CI_Core::RESPONSE_GENERIC_NO_DATA);
         }
 
-        // Todo: 2 nd task Comment
-        $post->comment();
+        $post->comment($text, $parentCommentId);
 
         $posts = Post_model::preparation($post, 'full_info');
+
         return $this->response_success(['post' => $posts]);
     }
 
@@ -86,7 +92,7 @@ class Main_page extends MY_Controller
     /**
      * @throws Exception
      */
-    public function login($user_id = null)
+    public function login()
     {
         $post = json_decode($this->security->xss_clean($this->input->raw_input_stream));
 

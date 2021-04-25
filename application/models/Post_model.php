@@ -200,9 +200,18 @@ class Post_model extends CI_Emerald_Model
         return (App::get_ci()->s->get_affected_rows() > 0);
     }
 
-    public function comment()
+    public function comment(string $text,?int $parentCommentId = null)
     {
+        $this->is_loaded(true);
 
+        return Comment_model::create(
+            [
+                'user_id' => User_model::get_user()->get_id(),
+                'assign_id' => $this->get_id(),
+                'parent_comment_id' => $parentCommentId,
+                'text' => $text,
+            ]
+        );
     }
 
     /**

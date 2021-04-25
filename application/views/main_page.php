@@ -201,7 +201,7 @@ use Model\User_model;
                                 <div class="form-group">
                                     <input type="text" class="form-control" id="addComment" v-model="commentText">
                                 </div>
-                                <button type="submit" class="btn btn-primary">Add comment</button>
+                                <button type="button" class="btn btn-primary" @click="addComment">Add comment</button>
                             </form>
                         </div>
                     </div>
@@ -253,6 +253,20 @@ use Model\User_model;
                 </div>
                 <div class="modal-body">
                     <h2 class="text-center">Likes: {{amount}}</h2>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal ERROR -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h2 class="text-center">ERROR !</h2>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-dismiss="modal">Ok</button>

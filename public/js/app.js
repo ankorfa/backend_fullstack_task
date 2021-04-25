@@ -27,25 +27,20 @@ var app = new Vue({
 			},
 		],
 	},
-	computed: {
-		test: function () {
-			var data = [];
-			return data;
-		}
-	},
+	computed: {},
 	created(){
 		var self = this
 		axios
 			.get('/main_page/get_all_posts')
-			.then(function (response) {
+			.then((response) => {
 				self.posts = response.data.posts;
 			})
 	},
 	methods: {
-		logout: function () {
+		logout() {
 			console.log ('logout');
 		},
-		logIn: function () {
+		logIn() {
 			var self= this;
 			if(self.login === ''){
 				self.invalidLogin = true
@@ -71,7 +66,7 @@ var app = new Vue({
 					})
 			}
 		},
-		fiilIn: function () {
+		fiilIn() {
 			var self= this;
 			if(self.addSum === 0){
 				self.invalidSum = true
@@ -88,7 +83,7 @@ var app = new Vue({
 					})
 			}
 		},
-		openPost: function (id) {
+		openPost (id) {
 			var self= this;
 			axios
 				.get('/main_page/get_post/' + id)
@@ -101,7 +96,7 @@ var app = new Vue({
 					}
 				})
 		},
-		addLike: function (id) {
+		addLike(id) {
 			var self= this;
 			axios
 				.get('/main_page/like')
@@ -110,7 +105,7 @@ var app = new Vue({
 				})
 
 		},
-		buyPack: function (id) {
+		buyPack(id) {
 			var self= this;
 			axios.post('/main_page/buy_boosterpack', {
 				id: id,
@@ -123,6 +118,27 @@ var app = new Vue({
 						}, 500);
 					}
 				})
+		},
+		addComment() {
+			axios.post(
+				'/main_page/comment',
+				{
+					post_id: this.post.id,
+					parent_comment_id: null,
+					text: this.commentText
+				}
+			).then(
+				(response) => {
+					if (response?.data?.status === 'success') {
+						this.post = response.data.post;
+						this.commentText = '';
+					} else {
+						setTimeout(function () {
+							$('#errorModal').modal('show');
+						}, 500);
+					}
+				}
+			);
 		}
 	}
 });
