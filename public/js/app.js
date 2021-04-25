@@ -12,6 +12,7 @@ var app = new Vue({
 		amount: 0,
 		likes: 0,
 		commentText: '',
+		commentReplyText: '',
 		packs: [
 			{
 				id: 1,
@@ -26,9 +27,10 @@ var app = new Vue({
 				price: 50
 			},
 		],
+		replyModalCommentId: null,
 	},
 	computed: {},
-	created(){
+	created() {
 		var self = this
 		axios
 			.get('/main_page/get_all_posts')
@@ -38,18 +40,16 @@ var app = new Vue({
 	},
 	methods: {
 		logout() {
-			console.log ('logout');
+			console.log('logout');
 		},
 		logIn() {
-			var self= this;
-			if(self.login === ''){
+			var self = this;
+			if (self.login === '') {
 				self.invalidLogin = true
-			}
-			else if(self.pass === ''){
+			} else if (self.pass === '') {
 				self.invalidLogin = false
 				self.invalidPass = true
-			}
-			else{
+			} else {
 				self.invalidLogin = false
 				self.invalidPass = false
 				axios.post('/main_page/login', {
@@ -67,11 +67,10 @@ var app = new Vue({
 			}
 		},
 		fiilIn() {
-			var self= this;
-			if(self.addSum === 0){
+			var self = this;
+			if (self.addSum === 0) {
 				self.invalidSum = true
-			}
-			else{
+			} else {
 				self.invalidSum = false
 				axios.post('/main_page/add_money', {
 					sum: self.addSum,
@@ -83,13 +82,13 @@ var app = new Vue({
 					})
 			}
 		},
-		openPost (id) {
-			var self= this;
+		openPost(id) {
+			var self = this;
 			axios
 				.get('/main_page/get_post/' + id)
 				.then(function (response) {
 					self.post = response.data.post;
-					if(self.post){
+					if (self.post) {
 						setTimeout(function () {
 							$('#postModal').modal('show');
 						}, 500);
@@ -97,7 +96,7 @@ var app = new Vue({
 				})
 		},
 		addLike(id) {
-			var self= this;
+			var self = this;
 			axios
 				.get('/main_page/like')
 				.then(function (response) {
@@ -106,32 +105,36 @@ var app = new Vue({
 
 		},
 		buyPack(id) {
-			var self= this;
+			var self = this;
 			axios.post('/main_page/buy_boosterpack', {
 				id: id,
 			})
 				.then(function (response) {
 					self.amount = response.data.amount
-					if(self.amount !== 0){
+					if (self.amount !== 0) {
 						setTimeout(function () {
 							$('#amountModal').modal('show');
 						}, 500);
 					}
 				})
 		},
-		addComment() {
+		addComment(parentId) {
 			axios.post(
 				'/main_page/comment',
 				{
 					post_id: this.post.id,
-					parent_comment_id: null,
-					text: this.commentText
+					parent_comment_id: parentId,
+					text: parentId ? this.commentReplyText : this.commentText
 				}
 			).then(
 				(response) => {
 					if (response?.data?.status === 'success') {
 						this.post = response.data.post;
-						this.commentText = '';
+						if (parentId) {
+							this.commentReplyText = '';
+						} else {
+							this.commentText = '';
+						}
 					} else {
 						setTimeout(function () {
 							$('#errorModal').modal('show');
@@ -139,6 +142,9 @@ var app = new Vue({
 					}
 				}
 			);
+		},
+		reply(comentId) {
+			this.replyModalCommentId = comentId;
 		}
 	}
 });

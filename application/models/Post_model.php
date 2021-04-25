@@ -153,8 +153,22 @@ class Post_model extends CI_Emerald_Model
         if (empty($this->comments)) {
             $this->comments = Comment_model::get_all_by_assign_id($this->get_id());
         }
-        return $this->comments;
 
+        return $this->comments;
+    }
+
+    /**
+     * @return Comment_model[]
+     */
+    public function get_comments_tree()
+    {
+        $this->is_loaded(TRUE);
+
+        if (empty($this->comments)) {
+            $this->comments = Comment_model::get_tree($this->get_id());
+        }
+
+        return $this->comments;
     }
 
     /**
@@ -292,7 +306,7 @@ class Post_model extends CI_Emerald_Model
 //            var_dump($d->get_user()->object_beautify()); die();
 
         $o->user = User_model::preparation($data->get_user(), 'main_page');
-        $o->coments = Comment_model::preparation($data->get_comments(), 'full_info');
+        $o->comments = Comment_model::preparation($data->get_comments_tree(), 'full_info');
 
         $o->likes = rand(0, 25);
 

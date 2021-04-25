@@ -194,14 +194,22 @@ use Model\User_model;
                                     <span>{{likes}}</span>
                                 </div>
                             </div>
-                            <p class="card-text" v-for="comment in post.coments">
+                            <div class="card-text" v-for="comment in post.comments">
                                 {{comment.user.personaname + ' - '}}<small class="text-muted">{{comment.text}}</small>
-                            </p>
+                                <small><a href="#" @click="reply(comment.id)">Reply comment</a></small>
+                                <form class="form-inline" v-if="replyModalCommentId === comment.id">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="addComment" v-model="commentReplyText">
+                                    </div>
+                                    <button type="button" class="btn btn-primary" @click="addComment(comment.id)">Reply comment</button>
+                                    <button type="button" class="btn btn-primary" @click="reply(null)">cancel</button>
+                                </form>
+                            </div>
                             <form class="form-inline">
                                 <div class="form-group">
                                     <input type="text" class="form-control" id="addComment" v-model="commentText">
                                 </div>
-                                <button type="button" class="btn btn-primary" @click="addComment">Add comment</button>
+                                <button type="button" class="btn btn-primary" @click="addComment(null)">Add comment</button>
                             </form>
                         </div>
                     </div>

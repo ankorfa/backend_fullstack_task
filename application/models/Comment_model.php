@@ -195,19 +195,54 @@ class Comment_model extends CI_Emerald_Model
     }
 
     /**
-     * @param int $assting_id
+     * @param int $assign_id
      * @return self[]
      * @throws Exception
      */
-    public static function get_all_by_assign_id(int $assting_id)
+    public static function get_all_by_assign_id(int $assign_id)
     {
 
-        $data = App::get_ci()->s->from(self::CLASS_TABLE)->where(['assign_id' => $assting_id])->orderBy('time_created', 'ASC')->many();
+        $data = App::get_ci()->s->from(self::CLASS_TABLE)->where(['assign_id' => $assign_id])->orderBy('time_created')->many();
         $ret = [];
         foreach ($data as $i) {
             $ret[] = (new self())->set($i);
         }
         return $ret;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function get_tree(int $assign_id)
+    {
+        $flat =  App::get_ci()->s->from(self::CLASS_TABLE)->where(['assign_id' => $assign_id])->orderBy('time_created')->many();
+        $tree =  self::makeRecursive($flat, 0, 'parent_comment_id', 'id', 'comments');
+
+        return array_map(function ($item) {
+            return (new self())->set($item);
+        }, $tree);
+    }
+
+    /**
+     * преобразует массив в рекурсивный массив дерева с детьми
+     *
+     * @param array   $d   flat data, implementing a id/parent id (adjacency list) structure
+     * @param mixed   $r   root id, node to return
+     * @param string  $pk  parent id index
+     * @param string  $k   id index
+     * @param string  $c   children index
+     * @return array
+     */
+    public static function makeRecursive(array $d, $r = 0, $pk = 'parent', $k = 'id', $c = 'children'): array
+    {
+        $m = [];
+        foreach ($d as $e) {
+            isset($m[$e[$pk]]) ?: $m[$e[$pk]] = [];
+            isset($m[$e[$k]]) ?: $m[$e[$k]] = [];
+            $m[$e[$pk]][] = array_merge($e, [$c => &$m[$e[$k]]]);
+        }
+
+        return $m[$r]; // remove [0] if there could be more than one root nodes
     }
 
     /**
@@ -242,6 +277,9 @@ class Comment_model extends CI_Emerald_Model
             $o->text = $d->get_text();
 
             $o->user = User_model::preparation($d->get_user(), 'main_page');
+            $o->comments = self::preparation(array_map(function ($item) {
+                return (new self())->set($item);
+            }, $d->get_comments()), 'full_info');
 
             $o->likes = rand(0, 25);
 
